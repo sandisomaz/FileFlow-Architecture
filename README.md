@@ -17,11 +17,12 @@
 
 ## 🎥 System Walkthrough & Interactive Demo
 
-Watch FileFlow conduct an autonomous, content-aware forensic organization pass across nested unstructured legal directories, demonstrating safe quick-look previews, relational file clustering, and automatic rule enforcement:
-
-https://github.com/user-attachments/assets/fileflow_walkthrough.mp4
-
-> *Video file also bundled locally in [`media/fileflow_walkthrough.mp4`](media/fileflow_walkthrough.mp4).*
+<div align="center">
+  <a href="media/fileflow_walkthrough.mp4">
+    <img src="media/demo.gif" alt="FileFlow System Walkthrough Demo" width="100%" style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+  </a>
+  <p><em>Click the preview above or <a href="media/fileflow_walkthrough.mp4">click here to watch the full HD video walkthrough (MP4)</a>.</em></p>
+</div>
 
 ---
 
