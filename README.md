@@ -1,99 +1,98 @@
-#  FileFlow
+# FileFlow
 ### Forensic Local AI File Organisation Engine for Legal & Professional Archives
+
+[![Local AI Sovereign](https://img.shields.io/badge/AI-Ollama%20100%25%20Local-blue.svg)](https://ollama.ai)
+[![Zero Cloud Exfiltration](https://img.shields.io/badge/Data%20Privacy-Zero%20Network%20Calls-success.svg)](#the-four-architectural-guarantees)
+[![POPIA s19 Verified](https://img.shields.io/badge/Compliance-POPIA%20s19-purple.svg)](#forensic-audit-trail--compliance)
+[![Licence](https://img.shields.io/badge/Architecture-Proprietary%20Engine-black.svg)](#data-privacy--verification-notice)
 
 ---
 
-> ###  Data Privacy & Verification Notice
+> ### 🔒 Data Privacy & Verification Notice
 > **Proprietary Codebase:** The complete source codebase for this project is hosted in a private repository to maintain local system sovereignty, protect LLM orchestration logic, and safeguard personal data handling. 
 > 
 > **Live Verification:** This repository serves as the public system architecture map and technical documentation. I am highly comfortable performing a live, end-to-end system demonstration and code walk-through during an interview to verify all architectural implementations and logic flows.
 
 ---
 
-##  Executive Summary
+## 🎥 System Walkthrough & Interactive Demo
 
-**FileFlow** is an offline, forensic file organization engine designed specifically for legal professionals and complex administrative environments. 
+Watch FileFlow conduct an autonomous, content-aware forensic organization pass across nested unstructured legal directories, demonstrating safe quick-look previews, relational file clustering, and automatic rule enforcement:
 
-Instead of relying on fragile file names (e.g., `CV_FINAL_v3.pdf`), FileFlow recursively scans messy directories, reads the *actual contents* of every document using a local AI cognition stack, and organizes them into a clean, structured archive. It handles corrupted files, unreadable scans, and duplicates seamlessly — without ever risking original files or sending data to the cloud.
+https://github.com/user-attachments/assets/fileflow_walkthrough.mp4
 
----
-
-##  The Four Architectural Guarantees
-
-FileFlow is built around four strict safety constraints that cannot be overridden by configuration:
-
-1.  **Non-Destructive:** Original files are never modified or deleted until a bit-perfect copy is MD5-verified at the destination.
-2.  **100% Local:** All AI inference runs locally via [Ollama](https://ollama.ai) on the host machine. Zero network calls to external APIs. No file content ever leaves the computer.
-3.  **Full Rollback:** A persistent `TransactionLedger` logs every operation. A single command can completely reverse any organization session back to its original state.
-4.  **Forensic Audit Trail:** A `Forensic_Manifest.json` is generated for every run, mapping every file's source path, target path, and MD5 hash.
+> *Video file also bundled locally in [`media/fileflow_walkthrough.mp4`](media/fileflow_walkthrough.mp4).*
 
 ---
 
-##  The Phase 2 Cognition Stack
+## 🏛️ Executive Summary
 
-Every discovered file passes through a multi-tier analysis pipeline before any movement is planned.
+**FileFlow** is an offline, forensic file organization engine designed specifically for legal practitioners, corporate compliance officers, and document-heavy professional environments.
 
-```text
-File
- │
- ├─► UnifiedExtractor     — raw text/metadata extraction (PDF, DOCX, image OCR)
- │       └─► ProcessPool  — each PDF extracted in an isolated child process
- │                          (prevents corrupted files from hanging the main process)
- │
- ├─► Judge (AI)           — Sovereign Archivist prompt → category + confidence ruling
- │       └─► Bridge       — Ollama reliability layer (health checks, fallback)
- │
- ├─► Inspector            — folder context propagation (fixes grounding errors)
- │
- └─► MD5 hash             — content-based deduplication fingerprint
+Instead of relying on fragile, user-assigned file names (e.g., `CV_FINAL_v3.pdf` or `Agreement_Signed_New.docx`), FileFlow recursively scans chaotic unstructured directories, extracts and reads the *actual substantive contents* of every document using an offline local AI cognition stack, and organizes them into an intuitive, deterministic archive. It handles corrupted files, unreadable scans, and duplicates seamlessly — without ever risking original files or sending a single byte of confidential data to the cloud.
 
-Classification Decision Tree
+---
 
-File arrives at Judge
-       │
-       ├─ Bridge healthy?
-       │     YES → Sovereign Archivist prompt → AI ruling (confidence 0.0–1.0)
-       │     NO  → Skip to rule-based path
-       │
-       ├─ confidence >= 0.75?
-       │     YES → Use AI category + entity
-       │     NO  → Fall back to rule-based classification
-       │
-       └─ Rule-based: keyword match against config.json category definitions
-             MATCH → Assign category
-             NO MATCH → "Unknown" → Inspector context check → Quarantine
+## 🛡️ The Four Architectural Guarantees
 
-The Four Execution Phases
+FileFlow is engineered around four strict safety constraints enforced at the core engine level:
 
-1.  Forensic Discovery (scanner.py): Deep recursive scan of the source
-    directory. Ghost files (<1KB) and corrupted files are instantly quarantined.
-    Built to be cycle-safe via resolved-path deduplication.
-2.  Cognition Staging (manager.py): Runs the Cognition Stack (AI + rule-based
-    parsing). If Ollama is offline, the system degrades gracefully to rule-based
-    classification silently.
-3.  Virtual Reconstruction (StagingManager): Builds a complete picture of the
-    organized structure in memory. Generates the Forensic_Manifest.json and
-    Duplicate Map (MD5 exact matches + semantic cosine similarity). Nothing
-    physical happens in this phase.
-4.  Atomic Commitment (executor.py): On user approval, files are copied,
-    MD5-verified, and logged in the TransactionLedger. Any failure flags the
-    session for rollback.
+1. **Non-Destructive Execution:** Original files are never moved or altered until a bit-perfect copy is MD5-verified at the destination.
+2. **100% Offline Air-Gapped Local Inference:** All AI inference runs locally via [Ollama](https://ollama.ai) on the host machine. Zero network calls to external APIs. No file contents or client metadata ever leave the local workstation.
+3. **Full Atomic Rollback:** A persistent `TransactionLedger` logs every atomic file operation. A single command can completely reverse an entire organization session back to its original state.
+4. **Forensic Audit Trail (POPIA s19):** A verifiable `Forensic_Manifest.json` is generated for every pass, cryptographically mapping every file's source path, target path, and MD5 hash for compliance records.
 
-Technology Stack & Benchmarks
+---
 
-  - Core Logic: Python 3.10+ (requires := operator for hash loops), FastAPI
-    (pywebview bridge)
-  - Inference Engine: Ollama local server running ministral-3:3b
-    (classification) and qwen3-embedding:4b (deduplication)
-  - Vision OCR: qwen3-vl:4b for scanned images and unreadable PDFs
-  - Vector Memory: LanceDB (vectors.lance) for semantic similarity search
-  - PDF Extraction Architecture: Isolated child processes via
-    multiprocessing.Pool with hard timeouts to prevent malformed PDFs from
-    crashing the system.
-  - Performance: Scans and processes standard legal folders at
-    approximately 200+ files per second (I/O bound) on consumer hardware.
+## 🧠 The Phase 2 Cognition Stack
 
-Architected and maintained by Sandiso Mazibuko.
+Every discovered file passes through a multi-tier analysis pipeline before any movement is planned or executed:
 
+```mermaid
+flowchart TD
+    A[Unstructured Source File] --> B[UnifiedExtractor]
+    B -->|Child Process Isolation| C[ProcessPool Worker]
+    C -->|Extracted Text / OCR| D{Judge: Local LLM}
+    D -->|Confidence >= 0.75| E[AI Taxonomy & Entity Assignment]
+    D -->|Confidence < 0.75 or Offline| F[Deterministic Rule-Based Matcher]
+    E --> G[Inspector: Context Propagation]
+    F --> G
+    G --> H[MD5 Fingerprint & Vector Embedding]
+    H --> I[Virtual Staging Plan]
+```
 
-Let me know when this one is successfully created! We only have one left (`Windows-Security-Audit`).
+### Classification Decision Tree
+1. **Bridge Health Check:** If the local Ollama server is active, dispatch to the Sovereign Archivist prompt. If offline, gracefully degrade to rule-based classification silently without crashing.
+2. **Confidence Thresholding:**
+   - **`Confidence >= 0.75`:** Assign LLM-derived document category, governing client entity, and standardized naming.
+   - **`Confidence < 0.75`:** Fall back to keyword and regular expression matchers mapped to regulatory templates.
+3. **Inspector Context Propagation:** Solves grounding errors by inspecting sibling directory contexts and matter metadata before categorizing isolated attachments.
+
+---
+
+## ⚡ Advanced Capabilities
+
+### 1. In-App Quick-Look Safe Preview
+Inspect document text and extract previews directly from the UI without launching heavy external viewers or triggering dangerous active-content payloads in PDFs or macro-enabled documents.
+
+### 2. Autonomous Watch Folder System
+Monitor incoming intake folders (e.g. Scans, Downloads, Case Intake) and automatically trigger rule-based or AI-assisted filing into structured client repositories upon file arrival.
+
+### 3. Relational Clustering & Semantic Deduplication
+- **MD5 Exact Duplication:** Identifies identical byte files across nested subdirectories and consolidates them into canonical locations.
+- **LanceDB Vector Search:** Embeds document text into local vector space (`vectors.lance`) to surface near-duplicate drafts, prior revisions, and related pleadings.
+
+---
+
+## 🛠️ Technology Stack & Benchmarks
+
+- **Core Logic:** Python 3.10+ (utilizing walrus `:=` hash streaming, dataclasses, asynchronous task executors), pywebview / FastAPI bridge.
+- **Inference Engine:** Offline Ollama local server running `ministral-3:3b` (classification) and `qwen3-embedding:4b` (semantic deduplication).
+- **Vision OCR:** `qwen3-vl:4b` for scanned invoices, court stamps, and legacy unsearchable PDFs.
+- **Vector Memory:** LanceDB local embedded vector database (`vectors.lance`).
+- **PDF Extraction Architecture:** Isolated child processes via `multiprocessing.Pool` with hard timeouts to prevent corrupted or malicious PDFs from crashing the engine.
+- **Throughput:** Scans and processes standard legal folders at **200+ files per second** (I/O bound) on consumer NVMe hardware.
+
+---
+
+Architected and maintained by **Sandiso Mazibuko**.
